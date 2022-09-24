@@ -1,0 +1,22 @@
+{%extends 'base.html'%}
+{%block body_block%}
+<div class="container  mt-5">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Book Name : {{book.book_name}}</h5>
+                    <p class="card-text">Author : {{book.author_name}}</p>
+                    <p class="card-text">Price : {{book.price}} Rs</p>
+                    <p class="card-text">Publisher : {{book.publisher}}</p>
+                    <a href="#" class="btn btn-primary">Add To Cart</a>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
+{%endblock%}
