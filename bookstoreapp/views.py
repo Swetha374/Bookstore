@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from django.views.generic import View,TemplateView,UpdateView
+from django.views.generic import View,TemplateView,UpdateView,CreateView
 from bookstoreapp import forms
 from django.urls import reverse_lazy
 from bookstoreapp.models import Books
@@ -7,18 +7,15 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 
-class SignUpView(View):
-    def get(self,request,*args,**kwargs):
-        form=forms.RegistrationForm()
-        return render(request,"registration.html",{"form":form})
+class SignUpView(CreateView):
+    model = User
+    form_class = forms.RegistrationForm
+    template_name = "registration.html"
+    success_url = reverse_lazy("signin")
 
-    def post(self,request,*args,**kwargs):
-        form=forms.RegistrationForm(request.POST)
-        if form.is_valid():
-            User.objects.create_user(**form.cleaned_data)
-            return redirect("signin")
-            messages.error(request, "registration failed")
-            return render(request,"registration.html",{"form":form})
+    def form_valid(self, form):
+        messages.success(self.request,"Your account has been created")
+        return super().form_valid(form)
 class LoginView(View):
     def get(self,request,*args,**kwargs):
         form=forms.LoginForm()
