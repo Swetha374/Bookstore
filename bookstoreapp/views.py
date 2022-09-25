@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
-from django.views.generic import View,TemplateView
+from django.views.generic import View,TemplateView,UpdateView
 from bookstoreapp import forms
+from django.urls import reverse_lazy
 from bookstoreapp.models import Books
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
@@ -75,22 +76,32 @@ def delete_book(request,*args,**kwargs):
     id=kwargs.get("id")
     Books.objects.get(id=id).delete()
     return redirect("list-book")
+class EditBookView(UpdateView):
+    model=Books
+    form_class = forms.EditBookForm
+    template_name = "edit-book.html"
+    pk_url_kwarg = "id"
+    success_url =reverse_lazy("list-book")
 
-class EditBookView(View):
-    def get(self,request,*args,**kwargs):
-        id=kwargs.get("id")
-        book=Books.objects.get(id=id)
-        form=forms.EditBookForm(instance=book)
-        return render(request,"edit-book.html",{"form":form})
-    def post(self,request,*args,**kwargs):
-        id=kwargs.get("id")
-        book = Books.objects.get(id=id)
-        form=forms.EditBookForm(request.POST,instance=book)
-        if form.is_valid():
-            form.save()
-            redirect("list-book")
-        else:
-            return render(request, "list-books.html", {"form": form})
+    def form_valid(self, form):
+        messages.success(self.request, "Book details has been changed")
+        return super().form_valid(form)
+
+# class EditBookView(View):
+#     def get(self,request,*args,**kwargs):
+#         id=kwargs.get("id")
+#         book=Books.objects.get(id=id)
+#         form=forms.EditBookForm(instance=book)
+#         return render(request,"edit-book.html",{"form":form})
+#     def post(self,request,*args,**kwargs):
+#         id=kwargs.get("id")
+#         book = Books.objects.get(id=id)
+#         form=forms.EditBookForm(request.POST,instance=book)
+#         if form.is_valid():
+#             form.save()
+#             redirect("list-book")
+#         else:
+#             return render(request, "list-books.html", {"form": form})
 # class Cart_add_order(View):
 #     def add_to_cart(request,*args,**kwargs):
 #         id=kwargs.get("id")
